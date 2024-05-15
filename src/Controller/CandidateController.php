@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Candidate;
+use App\Form\CandidateType;
+use App\Repository\CandidatureRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
