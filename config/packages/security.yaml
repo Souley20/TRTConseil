@@ -1,18 +1,42 @@
 security:
-    enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        # used to reload user from session & other features (e.g. switch_user)
+        administrateur_provider:
+            entity:
+                class: App\Entity\Administrateur
+                property: email
+        consultant_provider:
+            entity:
+                class: App\Entity\Consultant
+                property: email
+        recruteur_provider:
+            entity:
+                class: App\Entity\Recruteur
+                property: email
+        candidate_provider:
+            entity:
+                class: App\Entity\Candidate
+                property: email
+        all_users:
+            chain:
+                providers: [ 'administrateur_provider', 'consultant_provider', 'recruteur_provider', 'candidate_provider' ]
+    
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: all_users
+            custom_authenticator: App\Security\AppUserAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                target: app_home
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -23,8 +47,16 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+    - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/consultant, roles: ROLE_CONSULTANT }
+    - { path: ^/recruteur, roles: ROLE_RECRUTEUR }
+    - { path: ^/candidat, roles: ROLE_CANDIDATE }
+
+    role_hierarchy:
+        ROLE_CANDIDATE: ROLE_USER
+        ROLE_RECRUTEUR: ROLE_CANDIDATE
+        ROLE_CONSULTANT: ROLE_RECRUTEUR
+        ROLE_ADMIN: ROLE_RECRUTEUR
 
 when@test:
     security:
