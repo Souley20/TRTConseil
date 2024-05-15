@@ -22,6 +22,18 @@ class Candidature
      */
     private $isValid;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Candidate::class, inversedBy="candidatures")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $Candidate;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=JobOffer::class, inversedBy="candidatures")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $JobOffer;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -35,6 +47,30 @@ class Candidature
     public function setIsValid(?bool $isValid): self
     {
         $this->isValid = $isValid;
+
+        return $this;
+    }
+
+    public function getCandidate(): ?Candidate
+    {
+        return $this->Candidate;
+    }
+
+    public function setCandidate(?Candidate $Candidate): self
+    {
+        $this->Candidate = $Candidate;
+
+        return $this;
+    }
+
+    public function getJobOffer(): ?JobOffer
+    {
+        return $this->JobOffer;
+    }
+
+    public function setJobOffer(?JobOffer $JobOffer): self
+    {
+        $this->JobOffer = $JobOffer;
 
         return $this;
     }

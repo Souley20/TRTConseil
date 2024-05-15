@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CandidateRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -53,9 +55,25 @@ class Candidate
     private $isValid;
 
     /**
+     * @ORM\OneToMany(targetEntity=Candidature::class, mappedBy="Candidate")
+     */
+    private $candidatures;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=JobOffer::class, inversedBy="candidates")
+     */
+    private $JobOffer;
+
+    /**
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $job;
+
+    public function __construct()
+    {
+        $this->candidatures = new ArrayCollection();
+        $this->JobOffer = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -146,12 +164,66 @@ class Candidate
         return $this;
     }
 
+    /**
+     * @return Collection<int, Candidature>
+     */
+    public function getCandidatures(): Collection
+    {
+        return $this->candidatures;
+    }
+
+    public function addCandidature(Candidature $candidature): self
+    {
+        if (!$this->candidatures->contains($candidature)) {
+            $this->candidatures[] = $candidature;
+            $candidature->setCandidate($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCandidature(Candidature $candidature): self
+    {
+        if ($this->candidatures->removeElement($candidature)) {
+            // set the owning side to null (unless already changed)
+            if ($candidature->getCandidate() === $this) {
+                $candidature->setCandidate(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, JobOffer>
+     */
+    public function getJobOffer(): Collection
+    {
+        return $this->JobOffer;
+    }
+
+    public function addJobOffer(JobOffer $jobOffer): self
+    {
+        if (!$this->JobOffer->contains($jobOffer)) {
+            $this->JobOffer[] = $jobOffer;
+        }
+
+        return $this;
+    }
+
+    public function removeJobOffer(JobOffer $jobOffer): self
+    {
+        $this->JobOffer->removeElement($jobOffer);
+
+        return $this;
+    }
+
     public function getJob(): ?string
     {
         return $this->job;
     }
 
-    public function setJob(?string $job): self
+    public function setYes(string $job): self
     {
         $this->job = $job;
 

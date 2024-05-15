@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ConsultantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,6 +43,16 @@ class Consultant
      * @ORM\Column(type="string", length=30, nullable=true)
      */
     private $lastname;
+
+    /**
+     * @ORM\OneToMany(targetEntity=JobOffer::class, mappedBy="consultant")
+     */
+    private $consultant;
+
+    public function __construct()
+    {
+        $this->consultant = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -103,6 +115,36 @@ class Consultant
     public function setLastname(?string $lastname): self
     {
         $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, JobOffer>
+     */
+    public function getConsultant(): Collection
+    {
+        return $this->consultant;
+    }
+
+    public function addConsultant(JobOffer $consultant): self
+    {
+        if (!$this->consultant->contains($consultant)) {
+            $this->consultant[] = $consultant;
+            $consultant->setConsultant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConsultant(JobOffer $consultant): self
+    {
+        if ($this->consultant->removeElement($consultant)) {
+            // set the owning side to null (unless already changed)
+            if ($consultant->getConsultant() === $this) {
+                $consultant->setConsultant(null);
+            }
+        }
 
         return $this;
     }

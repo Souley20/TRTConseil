@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RecruteurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -56,6 +58,22 @@ class Recruteur
      * @ORM\Column(type="boolean")
      */
     private $isValid;
+
+    /**
+     * @ORM\OneToMany(targetEntity=JobOffer::class, mappedBy="Recruteur")
+     */
+    private $jobOffers;
+
+    /**
+     * @ORM\OneToMany(targetEntity=JobOffer::class, mappedBy="recruteur")
+     */
+    private $recruteur;
+
+    public function __construct()
+    {
+        $this->jobOffers = new ArrayCollection();
+        $this->recruteur = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -154,6 +172,66 @@ class Recruteur
     public function setIsValid(bool $isValid): self
     {
         $this->isValid = $isValid;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, JobOffer>
+     */
+    public function getJobOffers(): Collection
+    {
+        return $this->jobOffers;
+    }
+
+    public function addJobOffer(JobOffer $jobOffer): self
+    {
+        if (!$this->jobOffers->contains($jobOffer)) {
+            $this->jobOffers[] = $jobOffer;
+            $jobOffer->setRecruteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJobOffer(JobOffer $jobOffer): self
+    {
+        if ($this->jobOffers->removeElement($jobOffer)) {
+            // set the owning side to null (unless already changed)
+            if ($jobOffer->getRecruteur() === $this) {
+                $jobOffer->setRecruteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, JobOffer>
+     */
+    public function getRecruteur(): Collection
+    {
+        return $this->recruteur;
+    }
+
+    public function addRecruteur(JobOffer $recruteur): self
+    {
+        if (!$this->recruteur->contains($recruteur)) {
+            $this->recruteur[] = $recruteur;
+            $recruteur->setRecruteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecruteur(JobOffer $recruteur): self
+    {
+        if ($this->recruteur->removeElement($recruteur)) {
+            // set the owning side to null (unless already changed)
+            if ($recruteur->getRecruteur() === $this) {
+                $recruteur->setRecruteur(null);
+            }
+        }
 
         return $this;
     }

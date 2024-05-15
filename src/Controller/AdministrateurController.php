@@ -6,11 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+# [Route('/admin')]
 class AdministrateurController extends AbstractController
 {
-    /**
-     * @Route("/administrateur", name="app_administrateur")
-     */
+    #Route("/administrateur", name="app_administrateur")    
     public function index(): Response
     {
         return $this->render('administrateur/index.html.twig', [
