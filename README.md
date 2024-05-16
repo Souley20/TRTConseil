@@ -4,7 +4,7 @@
 
 Pour installer le projet sur votre machine, vous disposez de plusieurs manièère d'y proceder soit en clonant depuis le dépôt Github ou par composer en utilisant la commande
 <br/>
-  `git clone https://github.com/Souley20/eva_back_trtconseil.git`  
+  `git clone https://github.com/Souley20/trtconseil.git`  
 <br/>
   Rendez vous dans le dossier dans lequel vous avez cloner le projet en tapant
 <br/>
