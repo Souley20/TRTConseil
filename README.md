@@ -4,11 +4,11 @@
 
 Pour installer le projet sur votre machine, vous disposez de plusieurs manièère d'y proceder soit en clonant depuis le dépôt Github ou par composer en utilisant la commande
 <br/>
-  `git clone https://github.com/Souley20/trtconseil.git`  
+  `git clone https://github.com/Souley20/TRTConseil.git`  
 <br/>
   Rendez vous dans le dossier dans lequel vous avez cloner le projet en tapant
 <br/>
- `cd trtconseil`  
+ `cd TRTConseil`  
 <br/>
  Installer toutes les dépendances 
  <br/> 
