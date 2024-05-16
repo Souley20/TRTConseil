@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Candidat{% endblock %}
+
+{% block body %}
+{{ include('_navbar.html.twig') }}
+
+<div class="container">
+    <h1 class="text-center mt-5">{{ app.user.firstname | capitalize }}, vos candidatures</h1>
+
+    <button class="btn btn-outline-primary mb-5">
+        <a href="{{ path('app_candidate') }}" title="Retour au menu candidat"><i class="fa-solid fa-chevron-left"></i></a>
+    </button>
+
+
+    {% for candidacy in candidacies %}
+        {% if candidacy.candidate.email is same as(app.user.email) %}
+            <section class="mt-5">
+                <p>
+                    Vous avez postulé à l'offre <span class="fw-bold">"{{ candidacy.jobOffer.id }} - {{ candidacy.jobOffer.jobTitle }}"</span>.
+                </p>
+                <p class="fw-bold">Description:</p>
+                <p>{{ candidacy.jobOffer.description | capitalize}}</p>
+                {% if candidacy.isValid %}
+                    <p class="validMsg">Cette candidature a été validée par un Consultant.</p>
+                {% else %}
+                    <p class="invalidMsg">Cette candidature n'a pas encore été validée par un consultant.</p>
+                {% endif %}
+                <hr>
+            </section>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}

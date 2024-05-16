@@ -1,0 +1,18 @@
+{{ form_start(form) }}
+    {{ form_row(form.jobTitle, {
+        label: 'Nom du poste'
+    }) }}
+    {{ form_row(form.workplace, {
+        label: 'Localisation du poste'
+    }) }}
+    {{ form_row(form.description, {
+        label: 'Détails de l\'offre'
+    }) }}
+    {{ form_row(form.salary, {
+        label: 'Salaire mensuel en €'
+    }) }}
+    {{ form_row(form.schedule, {
+        label: 'Nombre d\'heures/semaine'
+    }) }}
+    <button class="btn btn-outline-primary ml-5 mt-2">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}

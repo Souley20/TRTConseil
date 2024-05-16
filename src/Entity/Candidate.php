@@ -6,73 +6,62 @@ use App\Repository\CandidateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=CandidateRepository::class)
- */
-class Candidate
+# [ORM\Entity(repositoryClass: CandidateRepository::class)]
+class Candidate implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    # [ORM\Id]
+    # [ORM\GeneratedValue]
+    # [ORM\Column(type: 'integer')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=180)
-     */
-    private $email;
+    # [ORM\Column(type: 'string', length: 180, unique: true)]
+    private string $email;
 
-    /**
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
+    # [ORM\Column(type: 'json')]
+    private array $roles = [];
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $password;
+    # [ORM\Column(type: 'string')]
+    private string $password;
 
-    /**
-     * @ORM\Column(type="string", length=30, nullable=true)
-     */
-    private $firstname;
+    # [ORM\Column(type: 'string', length: 30, nullable: true)]
+    private string $firstname;
 
-    /**
-     * @ORM\Column(type="string", length=30, nullable=true)
-     */
-    private $lastname;
+    # [ORM\Column(type: 'string', length: 30, nullable: true)]
+    private string  $lastname;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $cv;
+    # [ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $cv;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isValid;
+    # [ORM\Column(type: 'boolean')]
+    private bool $isValid = false;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Candidature::class, mappedBy="Candidate")
-     */
-    private $candidatures;
+    // #[ORM\ManyToMany(targetEntity: JobOffer::class, mappedBy: 'candidate')]
+    // private Collection $jobOffers;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=JobOffer::class, inversedBy="candidates")
-     */
-    private $JobOffer;
-
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
+    # [ORM\Column(type: 'string', length: 50, nullable: true)]
     private $job;
 
-    public function __construct()
+    # [ORM\OneToMany(mappedBy: 'candidate', targetEntity: Candidacy::class)]
+    private $candidacies;
+
+    # [Pure] public function __construct()
     {
-        $this->candidatures = new ArrayCollection();
-        $this->JobOffer = new ArrayCollection();
+        // $this->jobOffers = new ArrayCollection();
+        $this->candidacies = new ArrayCollection();
+    }
+
+    /**
+     * Transform to string in Candidacy, validate-candidacy.html.twig
+     * 
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->getId();
     }
 
     public function getId(): ?int
@@ -92,9 +81,26 @@ class Candidate
         return $this;
     }
 
-    public function getRoles(): ?array
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
     {
-        return $this->roles;
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
     public function setRoles(array $roles): self
@@ -104,7 +110,10 @@ class Candidate
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -114,6 +123,15 @@ class Candidate
         $this->password = $password;
 
         return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     public function getFirstname(): ?string
@@ -140,19 +158,19 @@ class Candidate
         return $this;
     }
 
-    public function getCv(): ?string
+    public function getCv()
     {
         return $this->cv;
     }
 
-    public function setCv(?string $cv): self
+    public function setCv($cv): self
     {
         $this->cv = $cv;
 
         return $this;
     }
 
-    public function isIsValid(): ?bool
+    public function getIsValid(): ?bool
     {
         return $this->isValid;
     }
@@ -164,68 +182,71 @@ class Candidate
         return $this;
     }
 
-    /**
-     * @return Collection<int, Candidature>
-     */
-    public function getCandidatures(): Collection
-    {
-        return $this->candidatures;
-    }
+    // /**
+    //  * @return Collection<int, JobOffer>
+    //  */
+    // public function getJobOffers(): Collection
+    // {
+    //     return $this->jobOffers;
+    // }
 
-    public function addCandidature(Candidature $candidature): self
-    {
-        if (!$this->candidatures->contains($candidature)) {
-            $this->candidatures[] = $candidature;
-            $candidature->setCandidate($this);
-        }
+    // public function addJobOffer(JobOffer $jobOffer): self
+    // {
+    //     if (!$this->jobOffers->contains($jobOffer)) {
+    //         $this->jobOffers[] = $jobOffer;
+    //         $jobOffer->addCandidate($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeCandidature(Candidature $candidature): self
-    {
-        if ($this->candidatures->removeElement($candidature)) {
-            // set the owning side to null (unless already changed)
-            if ($candidature->getCandidate() === $this) {
-                $candidature->setCandidate(null);
-            }
-        }
+    // public function removeJobOffer(JobOffer $jobOffer): self
+    // {
+    //     if ($this->jobOffers->removeElement($jobOffer)) {
+    //         $jobOffer->removeCandidate($this);
+    //     }
 
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, JobOffer>
-     */
-    public function getJobOffer(): Collection
-    {
-        return $this->JobOffer;
-    }
-
-    public function addJobOffer(JobOffer $jobOffer): self
-    {
-        if (!$this->JobOffer->contains($jobOffer)) {
-            $this->JobOffer[] = $jobOffer;
-        }
-
-        return $this;
-    }
-
-    public function removeJobOffer(JobOffer $jobOffer): self
-    {
-        $this->JobOffer->removeElement($jobOffer);
-
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getJob(): ?string
     {
         return $this->job;
     }
 
-    public function setYes(string $job): self
+    public function setJob(string $job): self
     {
         $this->job = $job;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Candidacy>
+     */
+    public function getCandidacies(): Collection
+    {
+        return $this->candidacies;
+    }
+
+    public function addCandidacy(Candidacy $candidacy): self
+    {
+        if (!$this->candidacies->contains($candidacy)) {
+            $this->candidacies[] = $candidacy;
+            $candidacy->setCandidate($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCandidacy(Candidacy $candidacy): self
+    {
+        if ($this->candidacies->removeElement($candidacy)) {
+            // set the owning side to null (unless already changed)
+            if ($candidacy->getCandidate() === $this) {
+                $candidacy->setCandidate(null);
+            }
+        }
 
         return $this;
     }

@@ -1,0 +1,17 @@
+{{ form_start(form) }}
+    {{ form_row(form.firstname, {
+        label: 'Prénom'
+    }) }}
+    {{ form_row(form.lastname, {
+        label: 'Nom'
+    }) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.companyName, {
+        label: 'Nom de la société'
+    }) }}
+    {{ form_row(form.companyAddress, {
+        label: 'Adresse de la société'
+    }) }}
+    <button class="btn btn-outline-primary ml-5 mt-2">{{ button_label|default('Enregistrer') }}</button>
+       
+{{ form_end(form) }}

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mes informations{% endblock %}
+
+{% block body %}
+{{ include('_navbar.html.twig') }}
+   <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header text-center mt-5">Modifier mes informations</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-5">
+        {{ include('recruiter/_form.html.twig', {'button_label': 'Modifier'}) }}
+
+        <a href="{{ path('app_recruiter') }}" role="button" class="btn btn-outline-success mt-2">Retour au menu</a>
+
+    </div>
+{% endblock %}

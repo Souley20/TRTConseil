@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Consultant | Validation{% endblock %}
+
+{% block body %}
+{{ include('_navbar.html.twig') }}
+
+<div class="container">
+    <h1 class="text-center mt-5">Liste des comptes candidats</h1>
+    
+    <button class="btn btn-outline-primary" title="Accueil espace Consultant">
+        <a href="{{ path('app_consultant_workingpage')}}">
+            <i class="fa-solid fa-angle-left"></i>
+        </a>
+    </button>
+    <section class="mt-5">
+        <div class="my-3 mx-5">	
+        {% for candidate in candidates %}
+            Nom : {{ candidate.lastname | capitalize}}
+            <br>
+            Prénom : {{ candidate.firstname | capitalize}}
+            <br>
+            Email : {{ candidate.email }}
+            <br>
+            Métier : {{ candidate.job  | capitalize}}
+            <br>
+            {% if candidate.isValid == false %}
+            <div>
+                Statut : <span class="invalidMsg">A valider</span>
+            </div>
+            <div>
+                <button class="btn btn-outline-primary my-2">
+                    <a href="{{ path('app_consultant_workingpage_validation', {'id': candidate.Id }) }}">Valider le compte</a>
+                </button>
+            <div>
+            {% else %}
+                Statut : <span class="validMsg">Validé</span>
+            {% endif %}
+            <hr>
+        {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

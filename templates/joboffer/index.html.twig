@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des offres d'emploi{% endblock %}
+
+{% block body %}
+    {{ include('_navbar.html.twig') }}
+
+    {# Alert message after joboffer creation #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success text-center mt-5">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <section class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header text-center mb-5 mt-5">Liste des offres d'emploi</h1>
+            </div>
+        </div>
+        <div class="mb-5">
+            {% if 'ROLE_CANDIDATE' in app.user.roles %}
+                <a href="{{ path('app_candidate') }}" class="btn btn-outline-primary" title="Retour au menu candidat"><i class="fa-solid fa-chevron-left"></i></a> 
+            {% elseif 'ROLE_RECRUITER' in app.user.roles %}
+                <a href="{{ path('app_recruiter') }}" class="btn btn-outline-primary" title="Retour au menu recruteur"><i class="fa-solid fa-chevron-left"></i></a>
+                <a href="{{ path('app_joboffer_new', {'idRecruiter': app.user.id}) }}" class="btn btn-outline-primary"><i class="fa-solid fa-circle-plus" title="Créer une nouvelle offre d'emploi"></i></a>
+            {% endif %}
+        </div>
+    </section>
+
+
+    <section class="container">
+        <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-3">
+        {% for joboffer in joboffers %}
+            {% if joboffer.isValid == true %}
+                    <div class="container d-flex justify-content-center">
+                        <div class="card mb-3" style="width: 20rem;">
+                                <h5 class="card-header text-center">{{ joboffer.jobTitle | capitalize}}</h5>
+                                <div class="card-body">
+                                    <p class="card-text">{{ joboffer.description | capitalize}}</p>
+                                    <p class="card-text">{{ joboffer.salary }} €/mois</p>
+                                    <p class="card-text">{{ joboffer.schedule }} heures/semaine</p>
+                                    <p class="card-subtitle mb-2 text-muted">{{ joboffer.workplace | capitalize}}</p>
+                                    {# <p>Postée par: {{joboffer.recruiter}} </p> #}
+                                </div>
+                                <div class="card-footer d-flex justify-content-around">
+                                    {% if 'ROLE_CANDIDATE' in app.user.roles %}
+                                        <a href="{{ path('app_candidacy', {'idCandidate': app.user.id, 'idJobOffer': joboffer.id }) }}">Postuler</a>
+                                    {% elseif 'ROLE_RECRUITER' in app.user.roles %}
+                                        {% if job_offer.recruiter.email is same as(app.user.email) %}
+                                            <a href="{{ path('app_joboffer_show', {'id': joboffer.id}) }}">Voir</a>
+                                            <a href="{{ path('app_joboffer_edit', {'id': joboffer.id}) }}">Modifier</a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                        </div>
+                    </div>
+                    {% elseif joboffer.isValid == false %}
+                    <div class="container d-flex justify-content-center">
+                        <div class="card mb-3" style="width: 20rem;">
+                                <h5 class="card-header text-center invalidMsg">Annonce non validée</h5>
+                                <div class="card-body">
+                                    <p class="text-center text-muted">A paraître</p>
+                                </div>
+                        </div>
+                    </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </section>
+    
+{% endblock %}

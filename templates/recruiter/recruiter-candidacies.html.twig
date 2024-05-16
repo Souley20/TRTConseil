@@ -1,0 +1,56 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Recruteur{% endblock %}
+
+{% block body %}
+{{ include('_navbar.html.twig') }}
+
+<div class="container">
+    <h1 class="text-center mt-5">{{ app.user.firstname | capitalize }}, les candidatures à vos offres</h1>
+    
+    <button class="btn btn-outline-primary" title="Retour au menu recruteur">
+        <a href="{{ path('app_recruiter') }}"><i class="fa-solid fa-chevron-left"></i></a>
+    </button>
+
+    {% for candidacy in candidacies %}
+        {% if candidacy.jobOffer.recruiter.email is same as(app.user.email) %}
+            <section class="mt-5">
+                {% if candidacy.isValid %}      
+                    <p>
+                        <span class="fw-bold">
+                            {{ candidacy.candidate.firstname | capitalize }} {{ candidacy.candidate.lastname | capitalize }}
+                        </span>
+                            , {{ candidacy.candidate.job }}, 
+                            a postulé à votre ofre d'emploi 
+                        <span class="fw-bold">
+                            {{ candidacy.JobOffer.id }} - {{ candidacy.JobOffer.jobtitle | capitalize }}
+                        </span>.
+                    </p>
+                    <p>
+                        Rappel de l'offre:<br>
+                        <span class="fw-bold">
+                            Description: 
+                        </span>
+                            {{ candidacy.jobOffer.description | capitalize }}<br>
+                        <span class="fw-bold">
+                            Lieu: 
+                        </span>
+                            {{ candidacy.jobOffer.workplace | capitalize }}<br>
+                        <span class="fw-bold">
+                            salaire: 
+                        </span>
+                            {{ candidacy.jobOffer.salary }} €<br>
+                        <span class="fw-bold">
+                            Nombre d'heures/semaine: 
+                        </span>
+                            {{ candidacy.jobOffer.schedule }}
+                    </p>                             
+                    <hr>
+                {% endif %}
+            </section>
+        {% endif %}
+    {% endfor %}
+
+</div>
+{% endblock %}

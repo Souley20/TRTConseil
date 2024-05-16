@@ -52,13 +52,13 @@ class AppUserAuthenticator extends AbstractLoginFormAuthenticator
         // Returns a different page after login depending on the role
         $user = $token->getUser();
         if (in_array("ROLE_ADMIN", $user->getRoles())) {
-            return new RedirectResponse($this->urlGenerator->generate('app_administrateur'));
+            return new RedirectResponse($this->urlGenerator->generate('app_administrator'));
         } else if (in_array("ROLE_CONSULTANT", $user->getRoles())) {
             return new RedirectResponse($this->urlGenerator->generate('app_consultant_workingpage'));
         } else if (in_array("ROLE_CANDIDATE", $user->getRoles())) {
             return new RedirectResponse($this->urlGenerator->generate('app_candidate'));
-        } else if (in_array("ROLE_RECRUTEUR", $user->getRoles())) {
-            return new RedirectResponse($this->urlGenerator->generate('app_recruteur'));
+        } else if (in_array("ROLE_RECRUITER", $user->getRoles())) {
+            return new RedirectResponse($this->urlGenerator->generate('app_recruiter'));
         }
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }

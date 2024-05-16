@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau consultant{% endblock %}
+
+{% block body %}
+{{ include('_navbar.html.twig') }}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header text-center mt-3">Créer un nouveau consultant</h1>
+        </div>
+    </div>
+    
+    <div class="m-5">
+        {{ include('consultant/_form.html.twig') }}
+
+        <a href="{{ path('app_create_consultant_index') }}" role="button" class="btn btn-outline-success mt-3">Retour à la liste</a>
+    </div>    
+</div>
+{% endblock %}

@@ -54,25 +54,25 @@ class ConsultantWorkingpageController extends AbstractController
     }
 
     // Recruiters list to validate page
-    # [Route('/consultant/workingpagevalidate-recruteur', name: 'app_consultant_workingpage_validate_recruteur')]
-    public function showRecruiterToValidate(RecruteurRepository $recruteurRepository): Response
+    # [Route('/consultant/workingpagevalidate-recruiter', name: 'app_consultant_workingpage_validate_recruiter')]
+    public function showRecruiterToValidate(RecruiterRepository $recruiterRepository): Response
     {
-        return $this->render('consultant_workingpage/validate-recruteur.html.twig', [
-            'recruteurs' => $recruteurRepository->findAll(),
+        return $this->render('consultant_workingpage/validate-recruiter.html.twig', [
+            'recruiters' => $recruiterRepository->findAll(),
         ]);
     }
 
-    // Recruteurs validation page
-    # [Route('/consultant/workingpagevalidation-recruteur/{id}', name: 'app_consultant_workingpage_validation_recruteur')]
-    public function validateRecruiter(int $id, EntityManagerInterface $entityManager, ManagerRegistry $doctrine, Recruteur $recruteur): Response
+    // Recruiters validation page
+    # [Route('/consultant/workingpagevalidation-recruteur/{id}', name: 'app_consultant_workingpage_validation_recruiter')]
+    public function validateRecruiter(int $id, EntityManagerInterface $entityManager, ManagerRegistry $doctrine, Recruiter $recruiter): Response
     {
-        $em = $doctrine->getRepository(Recruteur::class);
-        $recruteur = $em->find($id);
-        $id = $recruteur->getId();
-        $recruteur->setIsValid(true);
+        $em = $doctrine->getRepository(Recruiter::class);
+        $recruiter = $em->find($id);
+        $id = $recruiter->getId();
+        $recruiter->setIsValid(true);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_consultant_workingpage_validate_recruteur', [
+        return $this->redirectToRoute('app_consultant_workingpage_validate_recruiter', [
             'Id' => $id
         ]);
     }
@@ -104,45 +104,45 @@ class ConsultantWorkingpageController extends AbstractController
         return $this->redirectToRoute('app_consultant_workingpage_validate_joboffer', [], Response::HTTP_SEE_OTHER);
     }
 
-    // Candidatures list to validate page
-    # [Route('/consultant/workingpagevalidate-candidature', name: 'app_consultant_workingpage_validate_candidature')]
-    public function showCandidatureToValidate(CandidatureRepository $candidatureRepository): Response
+    // Candidacies list to validate page
+    # [Route('/consultant/workingpagevalidate-candidacy', name: 'app_consultant_workingpage_validate_candidacy')]
+    public function showCandidacyToValidate(CandidacyRepository $candidacyRepository): Response
     {
         return $this->render('consultant_workingpage/validate-candidature.html.twig', [
-            'candidatures' => $candidatureRepository->findAll(),
+            'candidatures' => $candidacyRepository->findAll(),
         ]);
     }
 
-    // Candidatures validation page
-    # [Route('/consultant/workingpagevalidation-candidature/{id}', name:'app_consultant_workingpage_validation_candidature')]
-    public function validateCandidature(
+    // Candidacies validation page
+    # [Route('/consultant/workingpagevalidation-candidacy/{id}', name:'app_consultant_workingpage_validation_candidacy')]
+    public function validateCandidacy(
         int $id, 
         EntityManagerInterface $entityManager, 
         ManagerRegistry $doctrine, 
-        Candidature $candidature, 
+        Candidacy $candidacy, 
         JobOfferRepository $jobOfferRepository,
         CandidateRepository $candidateRepository,
         MailerInterface $mailer
         ): Response
     {
-        $em = $doctrine->getRepository(Candidature::class);
-        $candidature = $em->find($id);
-        $id = $candidature->getId();
-        $candidature->setIsValid(true);
+        $em = $doctrine->getRepository(Candidacy::class);
+        $candidacy = $em->find($id);
+        $id = $candidacy->getId();
+        $candidacy->setIsValid(true);
         $entityManager->flush();
 
         // send mail function to recruiter
-        $candidate = $candidateRepository->find($candidature->getCandidate());
-        $jobOffer = $jobOfferRepository->find($candidature->getJobOffer());
+        $candidate = $candidateRepository->find($candidacy->getCandidate());
+        $jobOffer = $jobOfferRepository->find($candidacy->getJobOffer());
         $recruteurEmail = $jobOffer->getRecruteur()->getEmail();
         $recruteur = $jobOffer->getRecruteur();
         
         $email = (new Email())
-            ->from('brunod.dev@gmail.com')
-            ->to($recruteurEmail)
-            ->subject('Nouvelle candidature')
+            ->from('sanogosoul009@gmail.com')
+            ->to($recruiterEmail)
+            ->subject('Nouvelle candidacy')
             ->html('
-                <p>Bonjour '. ucfirst($recruteur->getFirstname()).' '.ucfirst($recruteur->getLastname()).',</p>
+                <p>Bonjour '. ucfirst($recruiter->getFirstname()).' '.ucfirst($recruiter->getLastname()).',</p>
                 <br>
                 <p>Le candidat ' . ucfirst($candidate->getFirstName()) . ' ' . ucfirst($candidate->getLastName()) . ' a postulé à votre annonce "' . $jobOffer->getJobTitle() . '".</p>
                 <br>
@@ -153,7 +153,7 @@ class ConsultantWorkingpageController extends AbstractController
             ')
             // ->attachFromPath('uploads/'. $candidate->getCV(), 'CV', 'application/pdf')
             // ->html('
-            //     <p>Bonjour '. $recruteur->getFirstname().' '.$recruteur->getLastname().',</p>
+            //     <p>Bonjour '. $recruiter->getFirstname().' '.$recruiter->getLastname().',</p>
             //     <br>
             //     <p>Le candidat ' . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' a postulé à votre annonce "' . $jobOffer->getJobTitle() . '".</p>
             //     <br>
@@ -163,7 +163,7 @@ class ConsultantWorkingpageController extends AbstractController
 
         $mailer->send($email);
 
-        return $this->redirectToRoute('app_consultant_workingpage_validate_candidature', [
+        return $this->redirectToRoute('app_consultant_workingpage_validate_candidacy', [
             'Id' => $id,
         ]);
     }

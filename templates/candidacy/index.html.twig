@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Candidature{% endblock %}
+
+{% block body %}
+{{ include('_navbar.html.twig') }}
+
+{# Alert message after candidacy #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success text-center mt-5">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <section class="container">
+        <div class="row">
+            <h1 class="page-header text-center mb-5 mt-3 col-lg-12">Candidatures</h1>
+        </div>
+    </section>
+
+    <div class="container mb-5 ">
+        <a href="{{ path('app_joboffer_index') }}" class="btn btn-outline-primary" title="Retour à la liste des annonces"><i class="fa-solid fa-chevron-left"></i></a>
+    </div>
+
+    <section class="container">
+        <div class="row">
+            <p>
+                Félicitation {{ app.user.firstName | capitalize }}, vous avez postulé à une annonce.
+                <br>
+                Il faut maintenant la validation d'un consultant pour rendre votre candidature effective.                
+            </p>
+        </div>
+    </section>
+
+{% endblock %}

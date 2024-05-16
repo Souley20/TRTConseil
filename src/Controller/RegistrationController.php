@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Administrateur;
+use App\Entity\Administrator;
 use App\Entity\Candidate;
-use App\Entity\Recruteur;
+use App\Entity\Recruiter;
 use App\Form\RegistrationFormType;
 use App\Form\RegistrationFormCandidateType;
-use App\Form\RegistrationFormRecruteurType;
+use App\Form\RegistrationFormRecruiterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +20,7 @@ class RegistrationController extends AbstractController
     # [Route('/register/admin', name: 'app_register_admin')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        $user = new Administrateur();
+        $user = new Administrator();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
@@ -80,11 +80,11 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    # [Route('/register/recruteur', name: 'app_register_recruteur')]
+    # [Route('/register/recruiter', name: 'app_register_recruiter')]
     public function registerRecruiter(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        $user = new Recruteur();
-        $form = $this->createForm(RegistrationFormRecruteurType::class, $user);
+        $user = new Recruiter();
+        $form = $this->createForm(RegistrationFormRecruiterType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -96,7 +96,7 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            $user->setRoles(['ROLE_RECRUTEUR']);
+            $user->setRoles(['ROLE_RECRUITER']);
             $entityManager->persist($user);
             $entityManager->flush();
             // do anything else you need here, like send an email

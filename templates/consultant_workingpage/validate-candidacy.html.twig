@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Consultant | Validation{% endblock %}
+
+{% block body %}
+{{ include('_navbar.html.twig') }}
+
+<div class="container">
+    <h1 class="text-center mt-5">Liste des candidatures</h1>
+    
+    <button class="btn btn-outline-primary mb-5" title="Accueil espace Consultant">
+        <a href="{{ path('app_consultant_workingpage')}}">
+            <i class="fa-solid fa-angle-left"></i>
+        </a>
+    </button>
+   <section class="container">
+        <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-3">
+        {% for candidacy in candidacies %}
+            <div class="container d-flex justify-content-center">
+                <div class="card mb-3" style="width: 20rem;">
+                    <h5 class="card-header text-center">{{ candidacy.Id }} - {{ candidacy.jobOffer.jobTitle }}</h5>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Le candidat {{ candidacy.candidate.firstname }} {{ candidacy.candidate.lastname }} a postulé à l'annonce {{ candidacy.jobOffer.jobTitle }}
+                        </p>  
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-around">
+                        {% if candidacy.isValid == true %}
+                            <p class="validMsg">Candidature validée</p>
+                        {% elseif candidacy.isValid == false %}
+                            <button class="btn btn-outline-primary my-2">
+                                <a href="{{ path('app_consultant_workingpage_validation_candidacy', {'id': candidacy.Id }) }}">Valider la candidature</a>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

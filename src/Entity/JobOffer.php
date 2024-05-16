@@ -6,89 +6,59 @@ use App\Repository\JobOfferRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
-/**
- * @ORM\Entity(repositoryClass=JobOfferRepository::class)
- */
+# [ORM\Entity(repositoryClass: JobOfferRepository::class)]
 class JobOffer
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    # [ORM\Id]
+    # [ORM\GeneratedValue]
+    # [ORM\Column(type: 'integer')]
+    private int  $id;
 
-    /**
-     * @ORM\Column(type="string", length=30)
-     */
-    private $jobTitle;
+    # [ORM\Column(type: 'string', length: 30)]
+    private string $jobTitle;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $workplace;
+    # [ORM\Column(type: 'string', length: 100)]
+    private string $workplace;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $description;
+    # [ORM\Column(type: 'text')]
+    private string $description;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isValid;
+    # [ORM\Column(type: 'boolean')]
+    private bool $isValid = false;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $salary;
+    # [ORM\ManyToOne(targetEntity: Consultant::class, inversedBy: 'jobOffers')]
+    // #[ORM\JoinColumn(nullable: true)]
+    private ?Consultant $consultant;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $schedule;
+    # [ORM\ManyToOne(targetEntity: Recruiter::class, inversedBy: 'jobOffers')]
+    // #[ORM\JoinColumn(nullable: true)]
+    private ?Recruiter $recruiter;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Candidature::class, mappedBy="JobOffer", orphanRemoval=true)
-     */
-    private $candidatures;
+    # [ORM\Column(type: 'integer')]
+    private int $salary;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Candidate::class, mappedBy="JobOffer")
-     */
-    private $candidates;
+    # [ORM\Column(type: 'integer')]
+    private int $schedule;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Consultant::class, inversedBy="consultant")
-     */
-    private $consultant;
+    # [ORM\OneToMany(mappedBy: 'jobOffer', targetEntity: Candidacy::class)]
+    private $candidacies;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=JobOffer::class, inversedBy="jobOffers")
-     */
-    private $Consultant;
-
-    /**
-     * @ORM\OneToMany(targetEntity=JobOffer::class, mappedBy="Consultant")
-     */
-    private $jobOffers;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Recruteur::class, inversedBy="jobOffers")
-     */
-    private $Recruteur;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Recruteur::class, inversedBy="recruteur")
-     */
-    private $recruteur;
-
-    public function __construct()
+    #[Pure] public function __construct()
     {
-        $this->candidatures = new ArrayCollection();
-        $this->candidates = new ArrayCollection();
-        $this->jobOffers = new ArrayCollection();
+        $this->candidate = new ArrayCollection();
+        $this->candidacies = new ArrayCollection();
+    }
+
+    /**
+     * Transform to string function to template
+     * 
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->getId();
     }
 
     public function getId(): ?int
@@ -144,6 +114,30 @@ class JobOffer
         return $this;
     }
 
+    public function getConsultant(): ?Consultant
+    {
+        return $this->consultant;
+    }
+
+    public function setConsultant(?Consultant $consultant): self
+    {
+        $this->consultant = $consultant;
+
+        return $this;
+    }
+
+    public function getRecruiter(): ?Recruiter
+    {
+        return $this->recruiter;
+    }
+
+    public function setRecruiter(?Recruiter $recruiter): self
+    {
+        $this->recruiter = $recruiter;
+
+        return $this;
+    }
+
     public function getSalary(): ?int
     {
         return $this->salary;
@@ -169,112 +163,31 @@ class JobOffer
     }
 
     /**
-     * @return Collection<int, Candidature>
+     * @return Collection<int, Candidacy>
      */
-    public function getCandidatures(): Collection
+    public function getCandidacies(): Collection
     {
-        return $this->candidatures;
+        return $this->candidacies;
     }
 
-    public function addCandidature(Candidature $candidature): self
+    public function addCandidacy(Candidacy $candidacy): self
     {
-        if (!$this->candidatures->contains($candidature)) {
-            $this->candidatures[] = $candidature;
-            $candidature->setJobOffer($this);
+        if (!$this->candidacies->contains($candidacy)) {
+            $this->candidacies[] = $candidacy;
+            $candidacy->setJobOffer($this);
         }
 
         return $this;
     }
 
-    public function removeCandidature(Candidature $candidature): self
+    public function removeCandidacy(Candidacy $candidacy): self
     {
-        if ($this->candidatures->removeElement($candidature)) {
+        if ($this->candidacies->removeElement($candidacy)) {
             // set the owning side to null (unless already changed)
-            if ($candidature->getJobOffer() === $this) {
-                $candidature->setJobOffer(null);
+            if ($candidacy->getJobOffer() === $this) {
+                $candidacy->setJobOffer(null);
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Candidate>
-     */
-    public function getCandidates(): Collection
-    {
-        return $this->candidates;
-    }
-
-    public function addCandidate(Candidate $candidate): self
-    {
-        if (!$this->candidates->contains($candidate)) {
-            $this->candidates[] = $candidate;
-            $candidate->addJobOffer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCandidate(Candidate $candidate): self
-    {
-        if ($this->candidates->removeElement($candidate)) {
-            $candidate->removeJobOffer($this);
-        }
-
-        return $this;
-    }
-
-    public function getConsultant(): ?Consultant
-    {
-        return $this->consultant;
-    }
-
-    public function setConsultant(?Consultant $consultant): self
-    {
-        $this->consultant = $consultant;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getJobOffers(): Collection
-    {
-        return $this->jobOffers;
-    }
-
-    public function addJobOffer(self $jobOffer): self
-    {
-        if (!$this->jobOffers->contains($jobOffer)) {
-            $this->jobOffers[] = $jobOffer;
-            $jobOffer->setConsultant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeJobOffer(self $jobOffer): self
-    {
-        if ($this->jobOffers->removeElement($jobOffer)) {
-            // set the owning side to null (unless already changed)
-            if ($jobOffer->getConsultant() === $this) {
-                $jobOffer->setConsultant(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getRecruteur(): ?Recruteur
-    {
-        return $this->Recruteur;
-    }
-
-    public function setRecruteur(?Recruteur $Recruteur): self
-    {
-        $this->Recruteur = $Recruteur;
 
         return $this;
     }

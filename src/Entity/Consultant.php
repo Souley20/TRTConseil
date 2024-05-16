@@ -6,52 +6,39 @@ use App\Repository\ConsultantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=ConsultantRepository::class)
- */
-class Consultant
+# [ORM\Entity(repositoryClass: ConsultantRepository::class)]
+class Consultant implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    # [ORM\Id]
+    # [ORM\GeneratedValue]
+    # [ORM\Column(type: 'integer')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=180, nullable=true)
-     */
-    private $email;
+    # [ORM\Column(type: 'string', length: 180, unique: true)]
+    private string $email;
 
-    /**
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
+    # [ORM\Column(type: 'json')]
+    private array $roles = [];
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $password;
+    # [ORM\Column(type: 'string')]
+    private string $password;
 
-    /**
-     * @ORM\Column(type="string", length=30, nullable=true)
-     */
-    private $firstname;
+    # [ORM\Column(type: 'string', length: 30, nullable:true)]
+    private string $firstname;
 
-    /**
-     * @ORM\Column(type="string", length=30, nullable=true)
-     */
-    private $lastname;
+    # [ORM\Column(type: 'string', length: 30, nullable: true)]
+    private string $lastname;
 
-    /**
-     * @ORM\OneToMany(targetEntity=JobOffer::class, mappedBy="consultant")
-     */
-    private $consultant;
+    # [ORM\OneToMany(mappedBy: 'consultant', targetEntity: JobOffer::class, orphanRemoval: true)]
+    private Collection $jobOffers;
 
-    public function __construct()
+    # [Pure] public function __construct()
     {
-        $this->consultant = new ArrayCollection();
+        $this->jobOffers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -64,16 +51,33 @@ class Consultant
         return $this->email;
     }
 
-    public function setEmail(?string $email): self
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
         return $this;
     }
 
-    public function getRoles(): ?array
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
     {
-        return $this->roles;
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
     public function setRoles(array $roles): self
@@ -83,7 +87,10 @@ class Consultant
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -95,12 +102,21 @@ class Consultant
         return $this;
     }
 
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
     public function getFirstname(): ?string
     {
         return $this->firstname;
     }
 
-    public function setFirstname(?string $firstname): self
+    public function setFirstname(string $firstname): self
     {
         $this->firstname = $firstname;
 
@@ -122,27 +138,27 @@ class Consultant
     /**
      * @return Collection<int, JobOffer>
      */
-    public function getConsultant(): Collection
+    public function getJobOffers(): Collection
     {
-        return $this->consultant;
+        return $this->jobOffers;
     }
 
-    public function addConsultant(JobOffer $consultant): self
+    public function addJobOffer(JobOffer $jobOffer): self
     {
-        if (!$this->consultant->contains($consultant)) {
-            $this->consultant[] = $consultant;
-            $consultant->setConsultant($this);
+        if (!$this->jobOffers->contains($jobOffer)) {
+            $this->jobOffers[] = $jobOffer;
+            $jobOffer->setConsultant($this);
         }
 
         return $this;
     }
 
-    public function removeConsultant(JobOffer $consultant): self
+    public function removeJobOffer(JobOffer $jobOffer): self
     {
-        if ($this->consultant->removeElement($consultant)) {
+        if ($this->jobOffers->removeElement($jobOffer)) {
             // set the owning side to null (unless already changed)
-            if ($consultant->getConsultant() === $this) {
-                $consultant->setConsultant(null);
+            if ($jobOffer->getConsultant() === $this) {
+                $jobOffer->setConsultant(null);
             }
         }
 

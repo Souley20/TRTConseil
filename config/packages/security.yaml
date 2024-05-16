@@ -1,13 +1,14 @@
 security:
+    enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        administrateur_provider:
+        administrator_provider:
             entity:
-                class: App\Entity\Administrateur
+                class: App\Entity\Administrator
                 property: email
         consultant_provider:
             entity:
@@ -15,7 +16,7 @@ security:
                 property: email
         recruteur_provider:
             entity:
-                class: App\Entity\Recruteur
+                class: App\Entity\Recruiter
                 property: email
         candidate_provider:
             entity:
@@ -23,7 +24,7 @@ security:
                 property: email
         all_users:
             chain:
-                providers: [ 'administrateur_provider', 'consultant_provider', 'recruteur_provider', 'candidate_provider' ]
+                providers: [ 'administrator_provider', 'consultant_provider', 'recruiter_provider', 'candidate_provider' ]
     
     firewalls:
         dev:
@@ -49,14 +50,14 @@ security:
     access_control:
     - { path: ^/admin, roles: ROLE_ADMIN }
     - { path: ^/consultant, roles: ROLE_CONSULTANT }
-    - { path: ^/recruteur, roles: ROLE_RECRUTEUR }
-    - { path: ^/candidat, roles: ROLE_CANDIDATE }
+    - { path: ^/recruiter, roles: ROLE_RECRUITER }
+    - { path: ^/candidate, roles: ROLE_CANDIDATE }
 
     role_hierarchy:
         ROLE_CANDIDATE: ROLE_USER
-        ROLE_RECRUTEUR: ROLE_CANDIDATE
-        ROLE_CONSULTANT: ROLE_RECRUTEUR
-        ROLE_ADMIN: ROLE_RECRUTEUR
+        ROLE_RECRUITER: ROLE_CANDIDATE
+        ROLE_CONSULTANT: ROLE_RECRUITER
+        ROLE_ADMIN: ROLE_RECRUITER
 
 when@test:
     security:

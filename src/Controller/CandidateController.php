@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Candidate;
 use App\Form\CandidateType;
-use App\Repository\CandidatureRepository;
+use App\Repository\candidacyRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\CandidateRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 # [Route('/candidate')
 class CandidateController extends AbstractController
 {
-      // HomePage candidat
+      // HomePage candidate
      # [Route("/candidate", name="app_candidate")]   
     public function index(): Response
     {
@@ -75,12 +75,12 @@ class CandidateController extends AbstractController
         ]);
     }
 
-    // Candidatures page
-    # [Route('/candidate-candidatures', name: 'app_candidate_candidatures')]
-    public function showCandidateCandidatures(CandidatureRepository $candidatureRepository): Response
+    // candidacies page
+    # [Route('/candidate-candidacies', name: 'app_candidate_candidacies')]
+    public function showCandidatecandidacies(candidacyRepository $candidacyRepository): Response
     {
-        return $this->render('candidate/candidate-candidatures.html.twig', [
-            'candidatures' => $candidatureRepository->findAll(),
+        return $this->render('candidate/candidate-candidacies.html.twig', [
+            'candidacies' => $candidacyRepository->findAll(),
         ]);
     }
 }

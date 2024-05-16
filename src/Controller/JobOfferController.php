@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\JobOffer;
-use App\Entity\Recruteur;
+use App\Entity\Recruiter;
 use App\Form\JobOfferType;
 use App\Repository\JobOfferRepository;
-use App\Repository\CandidatureRepository;
+use App\Repository\CandidacyRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,28 +16,28 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class JobOfferController extends AbstractController
 {
-  // Homepage Joboffer
-  # [Route('/joboffer/', name: 'app_joboffer_index', methods: ['GET'])]
-    public function index(JobOfferRepository $jobOfferRepository, CandidatureRepository $candidatureRepository): Response
+    // Homepage Joboffer
+    # [Route('/joboffer/', name: 'app_joboffer_index', methods: ['GET'])]
+    public function index(JobOfferRepository $jobOfferRepository, CandidacyRepository $candidacyRepository): Response
     {   
-        return $this->render('job_offer/index.html.twig', [
-            'job_offers' => $jobOfferRepository->findAll(),
-            'candidacies' => $candidatureRepository->findAll(),
+        return $this->render('joboffer/index.html.twig', [
+            'joboffers' => $jobOfferRepository->findAll(),
+            'candidacies' => $candidacyRepository->findAll(),
         ]);
     }
 
     // Create new joboffer page
-    # [Route('/recruteur/joboffer/new/{idRecruteur}', name: 'app_joboffer_new', methods: ['GET', 'POST'])]
-    public function new(int $idRecruteur, EntityManagerInterface $entityManager,ManagerRegistry $doctrine, Request $request, JobOfferRepository $jobOfferRepository): Response
+    # [Route('/recruiter/joboffer/new/{idRecruiter}', name: 'app_joboffer_new', methods: ['GET', 'POST'])]
+    public function new(int $idRecruiter, EntityManagerInterface $entityManager,ManagerRegistry $doctrine, Request $request, JobOfferRepository $jobOfferRepository): Response
     {
         // Récupérer le recruteur
-        $emRecruteur = $doctrine->getRepository(Recruteur::class)->find($idRecruteur);
+        $emRecruiter = $doctrine->getRepository(Recruiter::class)->find($idRecruiter);
 
         $jobOffer = new JobOffer();
         $form = $this->createForm(JobOfferType::class, $jobOffer);
         $form->handleRequest($request);
 
-        $jobOffer->setRecruteur($emRecruteur);
+        $jobOffer->setRecruiter($emRecruiter);
         $entityManager->flush();
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -61,7 +61,7 @@ class JobOfferController extends AbstractController
     # [Route('/joboffer/{id}', name: 'app_joboffer_show', methods: ['GET'])]
     public function show(JobOffer $jobOffer): Response
     {
-        return $this->render('job_offer/show.html.twig', [
+        return $this->render('joboffer/show.html.twig', [
             'job_offer' => $jobOffer,
         ]);
     }
@@ -80,7 +80,7 @@ class JobOfferController extends AbstractController
         }
 
         return $this->renderForm('joboffer/edit.html.twig', [
-            'joboffer' => $jobOffer,
+            'job_offer' => $jobOffer,
             'form' => $form,
         ]);
     }
